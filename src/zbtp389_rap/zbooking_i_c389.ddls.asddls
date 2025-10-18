@@ -5,7 +5,7 @@ define view entity ZBOOKING_I_C389
   as projection on ZBOOKING_R_C389
 {
   key BookingUUID,
-      TavelUUID,
+      TravelUUID,
       BookingID,
       BookingDate,
       CustomerID,

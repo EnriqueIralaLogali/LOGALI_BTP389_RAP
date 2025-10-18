@@ -3,7 +3,7 @@
 @Metadata.ignorePropagatedAnnotations: true
 define view entity ZBKSPPL_I_C389 as projection on ZBKSPPL_R_C389
 {
-    key BookSupplUUIS,
+    key BookSupplUUID,
       TravelUUID,
       BookingUUID,
       BookingSupplementID,

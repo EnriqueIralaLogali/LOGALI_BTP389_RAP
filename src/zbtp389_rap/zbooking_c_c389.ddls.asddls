@@ -4,12 +4,13 @@
 
 @Metadata.allowExtensions: true
 @Search.searchable: true
+@ObjectModel.semanticKey: [ 'BookingID' ]
 
 define view entity ZBOOKING_c_C389
   as projection on zbooking_r_c389
 {
   key BookingUUID,
-      TavelUUID,
+      TravelUUID,
 
       @Search.defaultSearchElement: true
       BookingID,

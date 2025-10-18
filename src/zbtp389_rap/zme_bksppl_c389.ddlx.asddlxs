@@ -13,8 +13,9 @@ annotate entity ZBKSPPL_C_C389 with
                 type: #IDENTIFICATION_REFERENCE,
                 label: 'Booking Supplement',
                 position: 10 }  ]
+                
   @UI.hidden:true
-  BookSupplUUIS;
+  BookSupplUUID;
 
   @UI.hidden:true
   BookingUUID;

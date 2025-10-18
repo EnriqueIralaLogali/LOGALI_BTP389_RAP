@@ -10,7 +10,7 @@
 define view entity zbooking_r_c389
   as select from zbooking_c389_a
 
-  association        to parent ztravel_r_c389    as _Travel        on  $projection.TavelUUID = _Travel.TravelUUID
+  association        to parent ztravel_r_c389    as _Travel        on  $projection.TravelUUID = _Travel.TravelUUID
   composition [0..*] of zbksppl_r_c389         as _BookingSupplement
 
 
@@ -23,7 +23,7 @@ define view entity zbooking_r_c389
 
 {
   key booking_uuid          as BookingUUID,
-      parent_uuid           as TavelUUID,
+      parent_uuid           as TravelUUID,
 
       booking_id            as BookingID,
       booking_date          as BookingDate,

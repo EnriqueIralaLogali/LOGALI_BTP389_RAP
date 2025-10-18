@@ -17,7 +17,7 @@ define view entity zbksppl_r_c389
   association [1..*] to /DMO/I_SupplementText  as _SupplementText on $projection.SupplementID = _SupplementText.SupplementID
 
 {
-  key booksuppl_uuid        as BookSupplUUIS,
+  key booksuppl_uuid        as BookSupplUUID,
       root_uuid             as TravelUUID,
       parent_uuid           as BookingUUID,
 

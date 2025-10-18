@@ -4,11 +4,12 @@
 
 @Metadata.allowExtensions: true
 @Search.searchable: true
+@ObjectModel.semanticKey: [ 'BookingSupplementID' ]
 
 define view entity ZBKSPPL_C_C389
-  as projection on ZBKSPPL_R_C389
+  as projection on zbksppl_r_c389
 {
-  key BookSupplUUIS,
+  key BookSupplUUID,
       TravelUUID,
       BookingUUID,
 

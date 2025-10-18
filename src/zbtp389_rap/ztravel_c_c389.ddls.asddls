@@ -4,6 +4,7 @@
 
 @Metadata.allowExtensions: true
 @Search.searchable: true
+@ObjectModel.semanticKey: [ 'TravelID' ]
 
 define root view entity ZTRAVEL_C_C389
   provider contract transactional_query

@@ -11,18 +11,20 @@ annotate entity ZBOOKING_c_C389 with
              purpose: #STANDARD,
              type: #IDENTIFICATION_REFERENCE,
              label: 'Booking',
-             position:      10 },
-           { id: 'BookingSupplement',
+             position: 10 },
+
+             { id: 'BookingSupplement',
              purpose: #STANDARD,
              type: #LINEITEM_REFERENCE,
              label: 'Booking Supplement',
              position: 20,
              targetElement: '_BookingSupplement'} ]
+
   @UI.hidden: true
   BookingUUID;
 
   @UI.hidden: true
-  TavelUUID;
+  TravelUUID;
 
   @UI: { lineItem:       [ { position: 10, importance: #HIGH } ],
          identification: [ { position: 10 } ] }
