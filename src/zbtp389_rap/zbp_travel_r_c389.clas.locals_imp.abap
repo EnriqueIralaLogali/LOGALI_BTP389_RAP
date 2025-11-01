@@ -306,6 +306,92 @@ CLASS lhc_Travel IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD reCalcTotalPrice.
+
+    TYPES: BEGIN OF ty_amount_per_curr,
+             amount        TYPE /dmo/total_price,
+             currency_code TYPE /dmo/currency_code,
+           END OF ty_amount_per_curr.
+
+    DATA: amount_per_curr TYPE STANDARD TABLE OF ty_amount_per_curr.
+
+    " Read Travel
+    READ ENTITIES OF ztravel_r_c389 IN LOCAL MODE
+    ENTITY Travel
+    FIELDS ( BookingFee CurrencyCode )
+    WITH CORRESPONDING #( keys )
+    RESULT DATA(travels).
+
+    DELETE travels WHERE CurrencyCode IS INITIAL.
+
+    LOOP AT travels ASSIGNING FIELD-SYMBOL(<travel>).
+
+      amount_per_curr = VALUE #( ( amount        = <travel>-BookingFee
+                                   currency_code = <travel>-CurrencyCode ) ).
+
+      " Read Bookings
+      READ ENTITIES OF ztravel_r_c389 IN LOCAL MODE
+      ENTITY Travel BY \_Booking
+      FIELDS ( FlightPrice CurrencyCode )
+      WITH VALUE #( ( %tky = <travel>-%tky ) )
+      RESULT DATA(bookings).
+
+      LOOP AT bookings INTO DATA(booking) WHERE CurrencyCode IS NOT INITIAL.
+
+        COLLECT VALUE ty_amount_per_curr( amount = booking-FlightPrice
+                                          currency_code = booking-CurrencyCode ) INTO amount_per_curr.
+
+      ENDLOOP.
+
+      " Read Bookings Suplements
+      READ ENTITIES OF ztravel_r_c389 IN LOCAL MODE
+      ENTITY Booking BY \_BookingSupplement
+      FIELDS ( Price CurrencyCode )
+      WITH VALUE #( FOR r_booking IN bookings ( %tky = r_booking-%tky ) )
+      RESULT DATA(bookingsSuplement).
+
+      LOOP AT bookingssuplement INTO DATA(bookingsuplement) WHERE CurrencyCode IS NOT INITIAL.
+
+        COLLECT VALUE ty_amount_per_curr( amount = bookingsuplement-Price
+                                          currency_code = bookingsuplement-CurrencyCode ) INTO amount_per_curr.
+
+      ENDLOOP.
+
+      CLEAR: <travel>-TotalPrice.
+
+      LOOP AT amount_per_curr INTO DATA(single_amt_per_curr).
+
+        " Currency Conversion
+        IF single_amt_per_curr-currency_code = <travel>-CurrencyCode.
+
+          <travel>-TotalPrice += single_amt_per_curr-amount. " <travel>-TotalPrice = <travel>-TotalPrice + single_amt_per_curr-amount.
+
+        ELSE.
+
+          /dmo/cl_flight_amdp=>convert_currency(
+            EXPORTING
+              iv_amount               = single_amt_per_curr-amount
+              iv_currency_code_source = single_amt_per_curr-currency_code
+              iv_currency_code_target = <travel>-CurrencyCode
+              iv_exchange_rate_date   = cl_abap_context_info=>get_system_date( )
+            IMPORTING
+              ev_amount               = DATA(total_booking_price_per_curr)
+          ).
+
+          <travel>-TotalPrice += total_booking_price_per_curr.
+
+        ENDIF.
+
+      ENDLOOP.
+
+    ENDLOOP.
+
+    "Write back the modified total price to entity
+    MODIFY ENTITIES OF ztravel_r_c389 IN LOCAL MODE
+     ENTITY Travel
+     UPDATE
+     FIELDS ( TotalPrice )
+     WITH CORRESPONDING #( travels ).
+
   ENDMETHOD.
 
   METHOD rejectTravel.
@@ -332,6 +418,12 @@ CLASS lhc_Travel IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD calculateTotalPrice.
+
+    MODIFY ENTITIES OF ztravel_r_c389 IN LOCAL MODE
+    ENTITY Travel
+    EXECUTE reCalcTotalPrice
+    FROM CORRESPONDING #( keys ).
+
   ENDMETHOD.
 
   METHOD setStatusToOpen.
