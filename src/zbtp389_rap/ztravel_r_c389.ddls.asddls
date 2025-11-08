@@ -26,6 +26,8 @@ define root view entity ztravel_r_c389
       currency_code         as CurrencyCode,
       description           as Description,
       overall_status        as OverallStatus,
+      
+//      cast( total_price as abap.fltp ) * cast( 1.21 as abap.fltp ) as PriceWithVAT,
 
       @Semantics.user.createdBy: true
       local_created_by      as LocalCreatedBy,
